@@ -1,9 +1,16 @@
-# The Project Goal:
+# 🎯 The Project Goal:
 This project demonstrates the use of Apache Airflow with Docker, including a customized exchange rate (EUR/TWD) email alert based on data retrieved from Bank Sinopac (Taiwan) website.
 
 
+# 🐍 Set up a Python Virtual Environment
+```
+python3 -m venv venv
+source venv/bin/activate  # Mac/Linux, venv\Scripts\activate # Windows
+pip install -r requirements.txt
+```
+
 # 🐳 Run Airflow in Docker
-I was following this [doc](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html)
+I was following this [doc](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html).
 Here shows the steps to set up and run Apache Airflow in a Docker environment.
 
 ## 1. Check System Memory
@@ -14,34 +21,36 @@ docker run --rm "debian:bookworm-slim" bash -c 'numfmt --to iec $(echo $(($(getc
 ```
 P.S. It will create a debian:bookworm-slim image, you can safely delete it if you don't plan to use it again.
 
-## 2. Download docker-compose.yaml
-Download the official Airflow Docker Compose file:
-```
-curl -LfO 'https://airflow.apache.org/docs/apache-airflow/3.0.1/docker-compose.yaml'
-```
-
-## 3. Create Required Folders
+## 2. Create Required Folders
 ```
 mkdir -p ./dags ./logs ./plugins ./config
 ```
 
-## 4. Set Up Environment File
+## 3. Set Up Environment File
 ```
 echo -e "AIRFLOW_UID=$(id -u)" > .env
 ```
 It will create a .env file with your system UID.
 
 
-## 5. Initialize the Database
+## 4. Initialize the Database
 ```
 docker compose up airflow-init
 ```
 
-## 6. Clean Up (Optional)
+## 5. Clean Up (Optional)
 To clean up volumes and orphan containers:
 ```
 docker compose down --volumes --remove-orphans
 ```
+
+## 6. Configure Gmail SMTP settings in the service.conf
+```
+email.from = xxx # Please replace the email address with your own, as the my current configuration uses the same address for both the sender and the recipient
+pass = xxx # You need to set up an App Password in your Gmail account to enable authentication for email sending
+```
+Note: You must first enable 2-Step Verification in your Google account. Once enabled, you can generate an App Password via [the following link](https://myaccount.google.com/apppasswords)
+
 
 ## 7. Start All Services
 Start all Airflow services:
@@ -50,15 +59,5 @@ Start all Airflow services:
 docker compose up
 ```
 
-# Additional Notes
-To support custom **/data** paths and **user-defined functions**, additional volume mappings have been configured in the docker-compose.yaml file as follows:
-
-```
-volumes:
-    - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
-    - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
-    - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
-    - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-    - ./data:/data # mount data folder
-    - ./:/opt/airflow/ # mount all files in the current directory
-```
+## Note:
+ The default username is `airflow` and the default password is also `airflow`
