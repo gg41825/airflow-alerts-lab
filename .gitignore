@@ -1,0 +1,25 @@
+# Byte-compiled / cache
+__pycache__/
+*/__pycache__/
+
+# Logs
+logs/
+*.log
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# IDE/editor files
+.vscode/
+.idea/
+
+# Python environment files
+*.pyc
+*.pyo
+*.pyd
+
+# OS-specific files
+.DS_Store
+Thumbs.db
